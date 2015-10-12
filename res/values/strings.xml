@@ -19,6 +19,7 @@
     <string name="product_name" translatable="false">cyanogenmod</string>
     <string name="os_name" translatable="false">CyanogenMod</string>
     <string name="default_theme_name" translatable="false">Material</string>
+    <string name="powered_by" translatable="false">Powered by JDCTeam</string>
 
     <string name="cm_account_type" translatable="false">com.cyanogenmod.account</string>
     <string name="cm_account_package_name" translatable="false">com.cyanogenmod.account</string>
