@@ -19,14 +19,14 @@
     <color name="white">#ffffff</color>
     <color name="page_background">#efefef</color>
 
-    <color name="primary">#00B1E5</color>
-    <color name="primary_dark">#00A2E5</color>
-    <color name="accent">#009789</color>
+    <color name="primary">#607D8B</color>
+    <color name="primary_dark">#455A64</color>
+    <color name="accent">#9E9E9E</color>
     <color name="primary_text">#8a000000</color>
     <color name="secondary_text">#727272</color>
     <color name="button_bar_text_enabled">#ff1e1e1e</color>
     <color name="button_bar_text_disabled">#321e1e1e</color>
-    <color name="divider">#40000000</color>
+    <color name="divider">#40B6B6B6</color>
     <color name="header_bg">@color/primary</color>
     <color name="header_condensed_bg">@color/primary_dark</color>
     <color name="button_bar_background">#e4e7e8</color>
