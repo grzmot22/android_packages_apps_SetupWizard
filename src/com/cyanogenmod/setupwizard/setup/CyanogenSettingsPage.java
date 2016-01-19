@@ -360,7 +360,7 @@ public class CyanogenSettingsPage extends SetupPage {
         @Override
         public void onResume() {
             super.onResume();
-            /*updateDisableNavkeysOption();*/
+            //updateDisableNavkeysOption();
             updateThemeOption();
             updateSmsOption();
         }
