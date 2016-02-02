@@ -291,7 +291,6 @@ public class CyanogenSettingsPage extends SetupPage {
         public void onResume() {
             super.onResume();
             updateDisableNavkeysOption();
-            updateMetricsOption();
             updateThemeOption();
         }
 
