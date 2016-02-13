@@ -18,20 +18,15 @@ package com.cyanogenmod.setupwizard.setup;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-/*import android.content.pm.ThemeUtils;
 import android.content.res.ThemeConfig;
-import android.content.res.ThemeManager;*/
+import android.content.res.ThemeManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -50,28 +45,20 @@ import com.cyanogenmod.setupwizard.R;
 import com.cyanogenmod.setupwizard.SetupWizardApp;
 import com.cyanogenmod.setupwizard.cmstats.SetupStats;
 import com.cyanogenmod.setupwizard.ui.SetupPageFragment;
-import com.cyanogenmod.setupwizard.ui.WebViewDialogFragment;
 import com.cyanogenmod.setupwizard.util.SetupWizardUtils;
-import com.cyanogenmod.setupwizard.util.WhisperPushUtils;
-
-import cyanogenmod.providers.CMSettings;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import cyanogenmod.hardware.CMHardwareManager;
+import cyanogenmod.providers.CMSettings;
 
 public class CyanogenSettingsPage extends SetupPage {
 
     public static final String TAG = "CyanogenSettingsPage";
 
-    public static final String KEY_REGISTER_WHISPERPUSH = "register";
-    public static final String KEY_ENABLE_NAV_KEYS = "enable_nav_keys";
+    public static final String DISABLE_NAV_KEYS = "disable_nav_keys";
     public static final String KEY_APPLY_DEFAULT_THEME = "apply_default_theme";
+    public static final String KEY_BUTTON_BACKLIGHT = "pre_navbar_button_backlight";
 
     public static final String PRIVACY_POLICY_URI = "https://cyngn.com/oobe-legal?hideHeader=1";
-    
-    private static final String WHISPERPUSH_PACKAGE = "org.whispersystems.whisperpush";
 
     public CyanogenSettingsPage(Context context, SetupDataCallbacks callbacks) {
         super(context, callbacks);
@@ -102,34 +89,24 @@ public class CyanogenSettingsPage extends SetupPage {
 
     private static void writeDisableNavkeysOption(Context context, boolean enabled) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        /*final int defaultBrightness = context.getResources().getInteger(
-                com.android.internal.R.integer.config_buttonBrightnessSettingDefault);*/
 
-        /*Settings.Secure.putInt(context.getContentResolver(),
-                Settings.Secure.DEV_FORCE_SHOW_NAVBAR, enabled ? 1 : 0);
-        final CMHardwareManager hardware = CMHardwareManager.getInstance(context);
-        hardware.set(CMHardwareManager.FEATURE_KEY_DISABLE, enabled);*/
+        CMSettings.Secure.putInt(context.getContentResolver(),
+                CMSettings.Secure.DEV_FORCE_SHOW_NAVBAR, enabled ? 1 : 0);
+        CMHardwareManager hardware = CMHardwareManager.getInstance(context);
+        hardware.set(CMHardwareManager.FEATURE_KEY_DISABLE, enabled);
 
         /* Save/restore button timeouts to disable them in softkey mode */
-        SharedPreferences.Editor editor = prefs.edit();
-
         if (enabled) {
-            int currentBrightness = CMSettings.Secure.getInt(context.getContentResolver(),
-                    CMSettings.Secure.BUTTON_BRIGHTNESS, 100);
-            if (!prefs.contains("pre_navbar_button_backlight")) {
-                editor.putInt("pre_navbar_button_backlight", currentBrightness);
-            }
             CMSettings.Secure.putInt(context.getContentResolver(),
                     CMSettings.Secure.BUTTON_BRIGHTNESS, 0);
         } else {
-            int oldBright = prefs.getInt("pre_navbar_button_backlight", -1);
-            if (oldBright != -1) {
-                CMSettings.Secure.putInt(context.getContentResolver(),
-                        CMSettings.Secure.BUTTON_BRIGHTNESS, oldBright);
-                editor.remove("pre_navbar_button_backlight");
-            }
+            int currentBrightness = CMSettings.Secure.getInt(context.getContentResolver(),
+                    CMSettings.Secure.BUTTON_BRIGHTNESS, 100);
+            int oldBright = prefs.getInt(KEY_BUTTON_BACKLIGHT,
+                    currentBrightness);
+            CMSettings.Secure.putInt(context.getContentResolver(),
+                    CMSettings.Secure.BUTTON_BRIGHTNESS, oldBright);
         }
-        editor.commit();
     }
 
     @Override
@@ -137,37 +114,23 @@ public class CyanogenSettingsPage extends SetupPage {
         getCallbacks().addFinishRunnable(new Runnable() {
             @Override
             public void run() {
-                if (getData().containsKey(KEY_ENABLE_NAV_KEYS)) {
+                if (getData().containsKey(DISABLE_NAV_KEYS)) {
                     SetupStats.addEvent(SetupStats.Categories.SETTING_CHANGED,
                             SetupStats.Action.ENABLE_NAV_KEYS,
                             SetupStats.Label.CHECKED,
-                            String.valueOf(getData().getBoolean(KEY_ENABLE_NAV_KEYS)));
-                    writeDisableNavkeysOption(mContext, getData().getBoolean(KEY_ENABLE_NAV_KEYS));
+                            String.valueOf(getData().getBoolean(DISABLE_NAV_KEYS)));
+                    writeDisableNavkeysOption(mContext, getData().getBoolean(DISABLE_NAV_KEYS));
                 }
             }
         });
-        handleWhisperPushRegistration();
         handleDefaultThemeSetup();
     }
 
-    private void handleWhisperPushRegistration() {
-        Bundle privacyData = getData();
-        if (privacyData != null &&
-                privacyData.containsKey(KEY_REGISTER_WHISPERPUSH) &&
-                privacyData.getBoolean(KEY_REGISTER_WHISPERPUSH)) {
-            SetupStats.addEvent(SetupStats.Categories.SETTING_CHANGED,
-                    SetupStats.Action.USE_SECURE_SMS,
-                    SetupStats.Label.CHECKED,
-                    String.valueOf(privacyData.getBoolean(KEY_REGISTER_WHISPERPUSH)));
-            Log.i(TAG, "Registering with WhisperPush");
-            WhisperPushUtils.startRegistration(mContext);
-        }
-    }
-
     private void handleDefaultThemeSetup() {
-        /*Bundle privacyData = getData();
-        if (!ThemeUtils.getDefaultThemePackageName(mContext).equals(ThemeConfig.SYSTEM_DEFAULT) &&
-                privacyData != null && privacyData.getBoolean(KEY_APPLY_DEFAULT_THEME)) {
+        Bundle privacyData = getData();
+        if (!SetupWizardUtils.getDefaultThemePackageName(mContext).equals(
+                ThemeConfig.SYSTEM_DEFAULT) && privacyData != null &&
+                privacyData.getBoolean(KEY_APPLY_DEFAULT_THEME)) {
             SetupStats.addEvent(SetupStats.Categories.SETTING_CHANGED,
                     SetupStats.Action.APPLY_CUSTOM_THEME,
                     SetupStats.Label.CHECKED,
@@ -176,9 +139,9 @@ public class CyanogenSettingsPage extends SetupPage {
             final ThemeManager tm = (ThemeManager) mContext.getSystemService(Context.THEME_SERVICE);
             tm.applyDefaultTheme();
 
-        } else { */
+        } else {
             getCallbacks().finishSetup();
-        //}
+        }
     }
 
     private static boolean hideKeyDisabler(Context ctx) {
@@ -191,26 +154,10 @@ public class CyanogenSettingsPage extends SetupPage {
         return hardware.get(CMHardwareManager.FEATURE_KEY_DISABLE);
     }
 
-    private static boolean hideWhisperPush(Context context) {
-        final int playServicesAvailable = GooglePlayServicesUtil
-                .isGooglePlayServicesAvailable(context);
-        try {
-            PackageInfo pi = context.getPackageManager().getPackageInfo(WHISPERPUSH_PACKAGE, 0);
-            if (pi == null) {
-                return true;
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            return true;
-        }
-        return playServicesAvailable != ConnectionResult.SUCCESS
-                || !SetupWizardUtils.hasTelephony(context)
-                || (SetupWizardUtils.hasTelephony(context) &&
-                SetupWizardUtils.isSimMissing(context));
+    private static boolean hideThemeSwitch(Context context) {
+        return SetupWizardUtils.getDefaultThemePackageName(context)
+                               .equals(ThemeConfig.SYSTEM_DEFAULT);
     }
-
-    /*private static boolean hideThemeSwitch(Context context) {
-        return ThemeUtils.getDefaultThemePackageName(context).equals(ThemeConfig.SYSTEM_DEFAULT);
-    }*/
 
     public static class CyanogenSettingsFragment extends SetupPageFragment {
 
@@ -219,15 +166,12 @@ public class CyanogenSettingsPage extends SetupPage {
         private ImageView mKillSwitchStatus;
         private View mDefaultThemeRow;
         private View mNavKeysRow;
-        private View mSecureSmsRow;
         private CheckBox mMetrics;
         private CheckBox mDefaultTheme;
         private CheckBox mNavKeys;
-        private CheckBox mSecureSms;
 
         private boolean mHideNavKeysRow = false;
         private boolean mHideThemeRow = false;
-        private boolean mHideSmsRow = false;
 
 
         private View.OnClickListener mDefaultThemeClickListener = new View.OnClickListener() {
@@ -244,16 +188,7 @@ public class CyanogenSettingsPage extends SetupPage {
             public void onClick(View view) {
                 boolean checked = !mNavKeys.isChecked();
                 mNavKeys.setChecked(checked);
-                mPage.getData().putBoolean(KEY_ENABLE_NAV_KEYS, checked);
-            }
-        };
-
-        private View.OnClickListener mSecureSmsClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                boolean checked = !mSecureSms.isChecked();
-                mSecureSms.setChecked(checked);
-                mPage.getData().putBoolean(KEY_REGISTER_WHISPERPUSH, checked);
+                mPage.getData().putBoolean(DISABLE_NAV_KEYS, checked);
             }
         };
 
@@ -297,7 +232,7 @@ public class CyanogenSettingsPage extends SetupPage {
             }
 
             mDefaultThemeRow = mRootView.findViewById(R.id.theme);
-            mHideThemeRow = true; // hideThemeSwitch(getActivity());
+            mHideThemeRow = hideThemeSwitch(getActivity());
             if (mHideThemeRow) {
                 mDefaultThemeRow.setVisibility(View.GONE);
             } else {
@@ -320,11 +255,11 @@ public class CyanogenSettingsPage extends SetupPage {
             mNavKeysRow.setOnClickListener(mNavKeysClickListener);
             mNavKeys = (CheckBox) mRootView.findViewById(R.id.nav_keys_checkbox);
             boolean needsNavBar = true;
-            /*try {
+            try {
                 IWindowManager windowManager = WindowManagerGlobal.getWindowManagerService();
                 needsNavBar = windowManager.needsNavigationBar();
             } catch (RemoteException e) {
-            }*/
+            }
             mHideNavKeysRow = hideKeyDisabler(getActivity());
             if (mHideNavKeysRow || needsNavBar) {
                 mNavKeysRow.setVisibility(View.GONE);
@@ -333,23 +268,6 @@ public class CyanogenSettingsPage extends SetupPage {
                         isKeyDisablerActive(getActivity());
                 mNavKeys.setChecked(navKeysDisabled);
             }
-
-            mSecureSmsRow = mRootView.findViewById(R.id.secure_sms);
-            mSecureSmsRow.setOnClickListener(mSecureSmsClickListener);
-            String useSecureSms = getString(R.string.services_use_secure_sms);
-            String secureSmsSummary = getString(R.string.services_secure_sms_label,
-                    useSecureSms, getString(R.string.os_name));
-            final SpannableStringBuilder secureSmsSpan =
-                    new SpannableStringBuilder(secureSmsSummary);
-            secureSmsSpan.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD),
-                    0, useSecureSms.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            TextView secureSms = (TextView) mRootView.findViewById(R.id.secure_sms_summary);
-            secureSms.setText(secureSmsSpan);
-            mHideSmsRow = hideWhisperPush(getActivity());
-            if (mHideSmsRow) {
-                mSecureSmsRow.setVisibility(View.GONE);
-            }
-            mSecureSms = (CheckBox) mRootView.findViewById(R.id.secure_sms_checkbox);
         }
 
         @Override
@@ -360,9 +278,8 @@ public class CyanogenSettingsPage extends SetupPage {
         @Override
         public void onResume() {
             super.onResume();
-            //updateDisableNavkeysOption();
+            updateDisableNavkeysOption();
             updateThemeOption();
-            updateSmsOption();
         }
 
         private void updateThemeOption() {
@@ -380,29 +297,18 @@ public class CyanogenSettingsPage extends SetupPage {
             }
         }
 
-        private void updateSmsOption() {
-            if (!mHideSmsRow) {
-                final Bundle myPageBundle = mPage.getData();
-                boolean smsChecked = myPageBundle.containsKey(KEY_REGISTER_WHISPERPUSH) ?
-                        myPageBundle.getBoolean(KEY_REGISTER_WHISPERPUSH) :
-                        false;
-                mSecureSms.setChecked(smsChecked);
-                myPageBundle.putBoolean(KEY_REGISTER_WHISPERPUSH, smsChecked);
-            }
-        }
-
-        /*private void updateDisableNavkeysOption() {
+        private void updateDisableNavkeysOption() {
             if (!mHideNavKeysRow) {
                 final Bundle myPageBundle = mPage.getData();
-                boolean enabled = Settings.Secure.getInt(getActivity().getContentResolver(),
-                        Settings.Secure.DEV_FORCE_SHOW_NAVBAR, 0) != 0;
-                boolean checked = myPageBundle.containsKey(KEY_ENABLE_NAV_KEYS) ?
-                        myPageBundle.getBoolean(KEY_ENABLE_NAV_KEYS) :
+                boolean enabled = CMSettings.Secure.getInt(getActivity().getContentResolver(),
+                        CMSettings.Secure.DEV_FORCE_SHOW_NAVBAR, 0) != 0;
+                boolean checked = myPageBundle.containsKey(DISABLE_NAV_KEYS) ?
+                        myPageBundle.getBoolean(DISABLE_NAV_KEYS) :
                         enabled;
                 mNavKeys.setChecked(checked);
-                myPageBundle.putBoolean(KEY_ENABLE_NAV_KEYS, checked);
+                myPageBundle.putBoolean(DISABLE_NAV_KEYS, checked);
             }
-        }*/
+        }
 
         private static boolean hideKillSwitch() {
             return !SetupWizardUtils.hasKillSwitch();
