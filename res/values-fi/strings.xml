@@ -48,7 +48,7 @@
   <string name="setup_mobile_data">Ota mobiilidata käyttöön</string>
   <string name="setup_mobile_data_no_service">Ei palvelua</string>
   <string name="setup_mobile_data_emergency_only">Vain hätäpuhelut</string>
-  <string name="enable_mobile_data_summary">Haluatko käyttää mobiilidataa asennuksen aikana? Mobiilidatan kytkeminen päälle saattaa aiheuttaa tiedonsiirtokuluja.</string>
+  <string name="enable_mobile_data_summary">Haluatko käyttää mobiilidataa asennuksen aikana? Mobiilidatan käyttöönottaminen voi aiheuttaa tiedonsiirtokuluja.</string>
   <string name="no">Ei</string>
   <string name="yes">Kyllä</string>
   <string name="data_sim_name">SIM <xliff:g id="sub">%d</xliff:g> - <xliff:g id="name">%s</xliff:g></string>
@@ -69,6 +69,7 @@
   <string name="setup_require_cyanogen_label"><b>Vaadi Cyanogen OS-tilin salasana</b> käyttääksesi laitetta myös tehdasasetusten palautuksen jälkeen.</string>
   <string name="setup_device_locked_instructions"><i>Poistaaksesi tämän ominaisuuden käytöstä/ottaaksesi käyttöön, mene Asetukset &gt; Suojaus</i></string>
   <string name="setup_warning_skip_anyway">Ilman Cyanogen OS-tiliä, et voi:\n\nMukauttaa puhelintasi uusilla kuvakkeilla, taustakuvilla tai muilla käyttämällä Teemat-sovellusta\n\nPaikantaa tai etätyhjentää kadonnutta puhelintasi</string>
+  <!-- Fingerprint setup -->
   <string name="settings_fingerprint_setup_title">Valitse toinen näytön lukitustapa</string>
   <string name="settings_fingerprint_setup_details">Miten haluat lukita näyttösi?</string>
   <string name="fingerprint_setup_title">Sormenjäljen asetus</string>

@@ -43,12 +43,9 @@
   <string name="location_access_summary"><b>Konum bilginizi isteyen uygulamalara izin ver.</b> Bu geçerli konumunuzu ve geçmiş konumlarınızı içerebilir.</string>
   <string name="location_battery_saving">Saatte yapılan GPS güncelleme sayısını kısıtlayarak <b>pil tüketimini azaltın</b>.</string>
   <string name="location_network">Uygulamaların konumunuzu bulmanısına yardımcı olmak için <b>Wi-Fi\'yi kullanın</b>.</string>
-  <string name="location_network_telephony">Uygulamaların konumunuzu bulmasına yardımcı olmak için <b>Wi-Fi\'yi ve mobil şebekeleri kullanın</b>.</string>
   <string name="location_network_gms">Konumunuzu belirlemek için <b>Google konum servislerini kullanın</b>. Bu, hiç uygulama çalışmıyorken bile isimsiz konum verilerinin Google\'a gönderilmesi demektir.</string>
-  <string name="setup_mobile_data">Mobil veriyi aç</string>
   <string name="setup_mobile_data_no_service">Servis yok</string>
   <string name="setup_mobile_data_emergency_only">Sadece acil durum çağrıları</string>
-  <string name="enable_mobile_data_summary">Kurulum sırasında mobil veriyi kullanmak istiyor musunuz? Mobil veriyi açarak veri ücretlerine tabi olabilirsiniz.</string>
   <string name="no">Hayır</string>
   <string name="yes">Evet</string>
   <string name="data_sim_name">SIM <xliff:g id="sub">%d</xliff:g> - <xliff:g id="name">%s</xliff:g></string>
@@ -69,6 +66,7 @@
   <string name="setup_require_cyanogen_label">Cihazınızı fabrika ayarlarına sıfırlandıktan sonra kullanabilmeniz için <b>Cyanogen OS hesap şifresi gerekir</b>.</string>
   <string name="setup_device_locked_instructions"><i>Bu özelliği açıp kapatmak için lütfen Ayarlar &gt; Güvenlik bölümüne gidin</i></string>
   <string name="setup_warning_skip_anyway">Cyanogen OS Hesabı olmadan, aşağıdakiler mümkün olmayacaktır:\n\nTelefonunuzu yeni simgeler, duvar kağıtları ve Temalar uygulamasındaki daha fazla ögeyle özelleştirmek\n\nTelefonunuzu kaybedince uzaktan konumunu bulmak veya içeriğini silmek</string>
+  <!-- Fingerprint setup -->
   <string name="settings_fingerprint_setup_title">Yedek ekran kilidi türü seçin</string>
   <string name="settings_fingerprint_setup_details">Ekranınızı nasıl kilitlemek istersiniz?</string>
   <string name="fingerprint_setup_title">Parmak izi kurulumu</string>

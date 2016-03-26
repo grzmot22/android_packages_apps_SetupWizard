@@ -27,6 +27,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.service.persistentdata.PersistentDataBlockManager;
 import android.util.Log;
@@ -123,9 +124,11 @@ public class GmsAccountPage extends SetupPage {
             } else {
                 handleResult(requestCode, resultCode);
             }
-        } else if (requestCode == SetupWizardApp.REQUEST_CODE_RESTORE_GMS) {
+        } else {
+            if (requestCode == SetupWizardApp.REQUEST_CODE_RESTORE_GMS) {
+                setHidden(true);
+            }
             handleResult(requestCode, resultCode);
-            setHidden(true);
         }
         return true;
     }
@@ -220,6 +223,9 @@ public class GmsAccountPage extends SetupPage {
         bundle.putBoolean(SetupWizardApp.EXTRA_FIRST_RUN, true);
         bundle.putBoolean(SetupWizardApp.EXTRA_ALLOW_SKIP, true);
         bundle.putBoolean(SetupWizardApp.EXTRA_USE_IMMERSIVE, true);
+        bundle.putBoolean(SetupWizardApp.EXTRA_SUPRESS_D2D_SETUP, !mContext.getPackageManager()
+                .hasSystemFeature(PackageManager.FEATURE_NFC));
+
         AccountManager
                 .get(mContext).addAccount(SetupWizardApp.ACCOUNT_TYPE_GMS, null, null,
                 bundle, null, new AccountManagerCallback<Bundle>() {

@@ -42,12 +42,9 @@
   <string name="location_services_summary">تسمح خدمات الموقع لتطبيقات النظام والتطبيقات الخارجية بجمع واستخدام البيانات مثل موقعك التقريبي. على سبيل المثال، قد يستخدم تطبيق ما موقعك التقريبي لتحديد موقع  المقاهي القريبة.</string>
   <string name="location_access_summary"><b>يسمح للتطبيقات التي طلبت إذنك</b> باستخدام معلومات موقعك. وقد يشمل ذلك موقعك الحالي ومواقعك السابقة.</string>
   <string name="location_network"><b>استخدام الواي فاي</b> لمساعدة التطبيقات على تحديد موقعك.</string>
-  <string name="location_network_telephony"><b>استخدام الواي فاي وشبكات الجوال</b> لمساعدة التطبيقات على تحديد موقعك.</string>
   <string name="location_network_gms"><b>استخدام خدمة الموقع من جوجل</b> لمساعدة التطبيقات على تحديد موقعك. وهذا يعني إرسال بيانات مجهولة عن الموقع إلى جوجل، حتى في حالة عدم تشغيل أي تطبيقات.</string>
-  <string name="setup_mobile_data">تشغيل بيانات الجوال</string>
   <string name="setup_mobile_data_no_service">لا توجد خدمة</string>
   <string name="setup_mobile_data_emergency_only">مكالمات الطوارئ فقط</string>
-  <string name="enable_mobile_data_summary">هل تريد تشغيل بيانات الجوال أثناء عملية الإعداد؟ تشغيل بيانات الجوال قد تترتب عليه رسوم البيانات.</string>
   <string name="no">لا</string>
   <string name="yes">نعم</string>
   <string name="data_sim_name">SIM <xliff:g id="sub">%d</xliff:g> - <xliff:g id="name">%s</xliff:g> شريحة</string>
@@ -68,6 +65,7 @@
   <string name="setup_require_cyanogen_label"><b>يتطلب كلمة مرور حساب Cyanogen OS </b>كي تتمكن من استخدام الجهاز حتى بعد إعادة تعيين المصنع.</string>
   <string name="setup_device_locked_instructions"><i>من أجل تشغيل/تعطيل هذه الميزة، الرجاء إذهب إلى إعدادات &gt; الأمان</i></string>
   <string name="setup_warning_skip_anyway">بدون حساب Cyanogen OS لن تستطيع أن:\n\nتخصص هاتفك بأيقونات وخلفيات جديدة والمزيد في تطبيق السمات\n\nأو تحديد مكان هاتفك أو مسح ذاكرته عن بعد إذا فُقد</string>
+  <!-- Fingerprint setup -->
   <string name="settings_fingerprint_setup_title">حدد نوعاً احتياطياً لشاشة القفل</string>
   <string name="settings_fingerprint_setup_details">كيف تريد إقفال الشاشة؟</string>
   <string name="fingerprint_setup_title">إنشاء بصمة الإصبع</string>
